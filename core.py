@@ -12,11 +12,13 @@ import re
 
 import time
 
-from police_style import *
+from pyaxmlparser import APK
 
-from rep_generation import *
+from android_verifier.police_style import clear_screen, load_animation, decomp_animation, simulate_long_task
 
-from rep_style import *
+from android_verifier.rep_generation import *
+
+from android_verifier.rep_style import *
 
 
 
@@ -51,6 +53,8 @@ sdk_attributes = [
 
 
 temp_dir=""
+
+choice=""
 
 count_obfuscated=0
 
@@ -106,13 +110,21 @@ def decompilation():
 
     print("\n")
 
-    #temp_dir = subprocess.run(["mkdir", "./temp"])
-
     print(f"{Cyan}{bold}Decompiling {input_file} with apktool...{reset}\n")
 
     result = subprocess.run(["apktool", "-f", "d", input_file])
 
-    temp_dir = subprocess.run(["cp", "-r", input_file.split('.')[0], "temp_dir"])
+    #subprocess.run(["mkdir", "temp_dir"])
+
+    #temp_dir = subprocess.run(["cp", "-r", input_file, "temp_dir"])
+
+    #temp_dir = subprocess.run(["cp", "-r", input_file.split('.')[0], "temp_dir"])
+
+    #destination = os.path.join(temp_dir, temp_dir2)
+
+    #subprocess.run(["mkdir", "-p", destination])
+    
+    #temp_dir2 = subprocess.run(["mv", input_file.split('.')[0], destination])
 
 
 
@@ -131,6 +143,12 @@ def decompilation():
         clear_screen()
 
 
+def extract():
+
+    subprocess.run(["7z", "x", input_file, "-otemp_dir"])
+
+
+
 
 def verify_f():
 
@@ -144,7 +162,11 @@ def verify_f():
 
 
 
+
+
+
 def check_obfuscated_names(file, count_obfuscated, count_no_obfuscated):
+
 
     if not os.path.isfile(file):
 
@@ -184,7 +206,7 @@ def check_obfuscated_names(file, count_obfuscated, count_no_obfuscated):
 
 def Ob_perC(count_obfuscated, count_no_obfuscated):
 
-    count_obfuscated, count_no_obfuscated = code_ob(temp_dir, input_file)
+    count_obfuscated, count_no_obfuscated = code_ob(input_file)
 
     total = count_obfuscated + count_no_obfuscated
 
@@ -226,19 +248,19 @@ def check_obfuscation_files():
 
 
 
-def code_ob(temp_dir, input_file):
+def code_ob(input_file):
 
     count_obfuscated = 0
 
     count_no_obfuscated = 0
 
-    base_path = os.path.join(temp_dir, os.path.splitext(input_file)[0])
+    #base_path = os.path.join(temp_dir, os.path.splitext(input_file)[0])
 
 
 
     # Checking AndroidManifest.xml
 
-    manifest_file = os.path.join(base_path, "AndroidManifest.xml")
+    manifest_file = os.path.join(os.path.splitext(input_file)[0], "AndroidManifest.xml")
 
     if os.path.isfile(manifest_file):
 
@@ -254,7 +276,7 @@ def code_ob(temp_dir, input_file):
 
     # Checking smali files
 
-    smali_dir = os.path.join(base_path, "smali")
+    smali_dir = os.path.join(os.path.splitext(input_file)[0], "smali")
 
     if os.path.isdir(smali_dir):
 
@@ -298,10 +320,9 @@ def code_ob(temp_dir, input_file):
 
 def principal_menu():
 
-    
 
     while True:
-
+        
         clear_screen()
 
         choice_menu()
@@ -310,37 +331,43 @@ def principal_menu():
 
         print("\n")
 
-
-
         if choice == "1":
 
-            check_obfuscation_files()
-
-            code_ob(temp_dir, input_file)
-
-            Ob_perC(count_obfuscated, count_no_obfuscated)
+            struct_apk()
 
             press_any_key()
 
         elif choice == "2":
 
-            return "manifest"
+            load_animation()
+
+            check_obfuscation_files()
+
+            code_ob(input_file)
+
+            Ob_perC(count_obfuscated, count_no_obfuscated)
+
+            press_any_key()
 
         elif choice == "3":
 
-            print("Generating Report...")
+            return "manifest"
 
-            with open("Report.txt", "w") as report:
+        elif choice == "4":
+
+            return "Meta"
+
+        elif choice == "5":
+
+            rep_animation()
+
+            with open("/tmp/report.txt", "w") as report:
 
                 check_obfuscation_files_rep(report)
 
                 code_ob_rep(temp_dir, input_file, report)
 
-
-
                 android_manifest = os.path.join(temp_dir, f"{os.path.splitext(input_file)[0]}", "AndroidManifest.xml")
-
-
 
                 attribute_style(report)
 
@@ -362,17 +389,19 @@ def principal_menu():
 
                 deep_links_rep(android_manifest, report)
 
-            print("\nReport completed")
+            print(f"{Purple}**Report saved into{reset} {Green}'/tmp/report.txt'.{reset}")
 
             press_any_key()
 
         elif choice.lower() == "q":
 
+            current_menu ='q'
+
             sys.exit(0)
 
         else:
 
-            print(f"{bold}{Red}Invalid value. Choose one of the options between 1 and 3.{reset}")
+            print(f"{bold}{Red}Invalid value. Choose one of the options between 1 and 5 or q.{reset}")
 
             time.sleep(2)
 
@@ -385,7 +414,7 @@ def manifest_menu():
     android_manifest = f"{os.path.splitext(input_file)[0]}/AndroidManifest.xml"
 
     while True:
-
+    
         clear_screen()
 
         choice_manifest()
@@ -432,11 +461,13 @@ def manifest_menu():
 
         elif choice.lower() == "q":
 
+            current_menu = 'q'
+
             sys.exit(0)
 
         else:
 
-            print("Invalid value. Choose one of the options between 1 and 6.")
+            print("Invalid value. Choose one of the options between 1 and 6 or q.")
 
             time.sleep(2)
 
@@ -444,19 +475,75 @@ def manifest_menu():
 
 
 
+def meta_menu():
+
+    file = os.path.join("temp_dir", "META-INF" ,"CERT.RSA")
+
+    while True:
+
+        clear_screen()
+
+        choice_meta()
+
+        choice = input("Select option: ")
+
+        print("\n")
 
 
-def simulate_long_task():
 
-    time.sleep(5)
+        if choice == "1":
+
+            load_animation()
+
+            check_MF(file)
+
+            press_any_key()
+
+        elif choice == "2":
+
+            load_animation()
+
+            check_CSF(file)
+
+            press_any_key()
 
 
+        elif choice == "3":
 
-def loading_animation():
+            load_animation()
 
-    # Implement a loading animation here
+            check_CRSA(file)  
 
-    pass
+            press_any_key()      
+
+        elif choice == "4":
+
+            return "main"
+
+        elif choice.lower() == "q":
+
+            current_menu = 'q'
+
+            sys.exit(0)
+
+        else:
+
+            print("Invalid value. Choose one of the options between 1 and 4 or q.")
+
+            time.sleep(2)
+
+            clear_screen()
+        
+
+
+def struct_apk():
+
+    # Create an APK object
+    apk = APK(input_file)
+
+    # Display the APK information
+    apk.show()
+
 
 
 
@@ -494,9 +581,9 @@ def check_attribute(attribute, android_manifest):
 
 def manifest_main(app_attributes, android_manifest):
 
-    simulate_long_task()
+    load_animation()
 
-    loading_animation()
+
 
     
 
@@ -508,15 +595,11 @@ def manifest_main(app_attributes, android_manifest):
 
     
 
-    simulate_long_task()
-
 
 
 def app_permissions(input_file):
 
-    simulate_long_task()
-
-    loading_animation()
+    load_animation()
 
     
 
@@ -546,9 +629,7 @@ def app_permissions(input_file):
 
 def exported_component(android_manifest):
 
-    simulate_long_task()
-
-    loading_animation()
+    load_animation()
 
     
 
@@ -568,9 +649,7 @@ def exported_component(android_manifest):
 
 def check_sdk(sdk_attributes, android_manifest):
 
-    simulate_long_task()
-
-    loading_animation()
+    load_animation()
 
     
 
@@ -596,9 +675,7 @@ def check_sdk(sdk_attributes, android_manifest):
 
 def deep_links(android_manifest):
 
-    simulate_long_task()
-
-    loading_animation()
+    load_animation()
 
     
 
@@ -624,6 +701,37 @@ def deep_links(android_manifest):
 
 
 
+def check_MF(file):
+
+    manifest_mf_path = os.path.join("temp_dir", "META-INF" ,"MANIFEST.MF")
+
+    with open(manifest_mf_path, 'r') as f:
+
+        content = f.read()
+
+    print(content)
+
+
+def check_CSF(file):
+
+    cert_sf_path = os.path.join("temp_dir", "META-INF" ,"CERT.SF")
+
+    with open(cert_sf_path, 'r') as f:
+
+        content = f.read()
+
+    print(content)
+
+
+
+def check_CRSA(file):
+
+    cert_rsa_path = os.path.join("temp_dir", "META-INF" ,"CERT.RSA")
+
+    subprocess.run(["keytool", "-printcert", "-file", cert_rsa_path])
+
+
+
 def press_any_key():
 
     print("\n")
@@ -635,6 +743,82 @@ def press_any_key():
     time.sleep(1)
 
     subprocess.call('clear' if os.name == 'posix' else 'cls', shell=True)
+
+
+def remove_directory(dir_path):
+
+    if os.path.exists(dir_path):
+
+        shutil.rmtree(dir_path)
+
+        print(f"Deleted directory: {dir_path}")
+
+    else:
+
+        print(f"Directory does not exist: {dir_path}")
+
+
+def main():
+
+    if len(sys.argv) < 2:
+
+        print(f"Usage: {sys.argv[0]} path_to_apk_file")
+        
+        sys.exit(1)
+    
+    input_file = sys.argv[1]
+
+    clear_screen()
+
+    simulate_long_task()
+
+    check_apktool_installed()
+
+    decomp_animation()
+
+    decompilation()
+
+    extract()
+
+    verify_f()
+
+
+
+    current_menu = "main"
+
+
+    try:
+
+        while True:
+
+            if current_menu == "main":
+
+                current_menu = principal_menu()
+
+            elif current_menu == "manifest":
+
+                current_menu = manifest_menu()
+            
+            elif current_menu == "Meta":
+
+                current_menu = meta_menu()
+
+            elif current_menu == "q":
+
+                break
+
+    except KeyboardInterrupt:
+    
+        pass
+    
+    finally:
+
+        directories = ["android_verifier/__pycache__", "InsecureShop", "temp_dir"]
+
+        for dir_path in directories:
+            remove_directory(dir_path)
+
+        print("Cleanup complete.")
 
 
 
