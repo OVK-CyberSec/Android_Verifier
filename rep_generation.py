@@ -6,12 +6,30 @@ import time
 
 import subprocess
 
-from police_style import *
+from android_verifier.police_style import *
 
-from rep_style import *
+from android_verifier.rep_style import *
 
-from functions import *
+from android_verifier.core import *
 
+
+
+
+def Ob_perC(count_obfuscated, count_no_obfuscated, report):
+
+    count_obfuscated, count_no_obfuscated = code_ob(temp_dir, input_file)
+
+    total = count_obfuscated + count_no_obfuscated
+
+    if total != 0:
+
+        percentage = (count_obfuscated / total) * 100
+
+    else:
+
+        percentage = 5
+
+    print(f"{bold}{Yellow}Application is {percentage:.2f}% obfuscated{reset}", file=report)
 
 
 def check_obfuscated_names_rep(file, report):
@@ -106,8 +124,6 @@ def code_ob_rep(temp_dir, input_file, report):
 
 
 
-    print("\nObfuscation check completed.\n", file=report)
-
 
 
 def manifest_main_rep(app_attributes, android_manifest, report):
@@ -172,77 +188,36 @@ def exported_component_rep(android_manifest, report):
 
     with open(android_manifest, 'r') as f:
 
-        content = f.read()
+        for line in f:
 
-    exported_components = re.findall(r'android:exported="[^"]+"', content)
+            if 'android:exported="' in line:
 
-    for component in exported_components:
+                print(line.strip(), file=report)
 
-        print(component, file=report)
-
-        print()
+                print()
 
 
 
 def check_sdk_rep(sdk_attributes, android_manifest, report):
 
-    # Open and read the content of the AndroidManifest.xml file
 
     with open(android_manifest, 'r') as f:
 
         content = f.read()
 
+
+        result = re.search(f'{sdk_attributes[0]}"([^"]*)', content)
+
+        #print(result)
+
     
-
-    # Loop through each attribute in the sdk_attributes list
-
-    for attribute in sdk_attributes:
-
-        # Search for the attribute in the content
-
-        result = re.search(f'{attribute}"([^"]*)', content)
-
-        print(result)
-
-        
-
         if result:
-
-            # If the attribute is found, get its value
 
             value = result.group(1)
 
-            # Print the attribute and its value to the report
+            for attribute in sdk_attributes:
 
-            print_found_rep(attribute, value, report)
-
-        else:
-
-            # If the attribute is not found, print a not found message to the report
-
-            print_not_found_rep(attribute, report)
-
-
-
-
-
-"""def check_sdk_rep(sdk_attributes, android_manifest, report):
-
-    sdk_style(report)
-
-    with open(android_manifest, 'r') as f:
-
-        content = f.read()
-
-    result = re.search(f'{sdk_attributes[0]}"([^"]*)', content)
-
-    if result:
-
-        value = result.group(1)
-
-        for attribute in sdk_attributes:
-
-            print_found_rep(attribute, value, report)"""
+                print_found_rep(attribute, value, report)
 
 
 
@@ -274,9 +249,9 @@ def simulate_long_task():
 
 def press_any_key():
 
-    print("\n")
+    print("\nPress any key to continue...", end='', flush=True)
 
-    input("Press any key to continue...")
+    input()
 
     print("")
 
@@ -284,8 +259,3 @@ def press_any_key():
 
     subprocess.call('clear' if os.name == 'posix' else 'cls', shell=True)
 
-
-
-# You'll need to implement the style functions (filesob_style, manifestob_style, etc.)
-
-# and the print functions (print_true_rep, print_false_rep, etc.) from the police_style module
