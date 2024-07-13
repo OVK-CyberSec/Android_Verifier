@@ -2,7 +2,7 @@
 
 
 
-from functions import *
+from android_verifier.core import *
 
 
 
