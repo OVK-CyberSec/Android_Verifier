@@ -41,6 +41,15 @@ def print_green_rep(attribute, report):
     print(f"{attribute} is set to True\n".replace('=', ''), file=report)
 
 
+def overview_style(report):
+
+    print("\n =============================================================================", file=report)
+
+    print(" =========== Checking Overview [FILES/ACTIVITIES/SERVICES/etc...] ==============", file=report)
+
+    print(" =============================================================================\n", file=report)
+
+
 
 def attribute_style(report):
 
@@ -129,3 +138,33 @@ def fF_ob_style(report):
     print(" ============ Checking directory and file names in smali for obfuscation... =================", file=report)
 
     print(" ============================================================================================\n", file=report)
+
+
+def mmf_style(report):
+
+    print("\n =============================================================================", file=report)
+
+    print(" ========================== Checking for MANIFEST.MF... ========================", file=report)
+
+    print(" =============================================================================\n", file=report)
+
+
+
+def csf_style(report):
+
+    print("\n =============================================================================", file=report)
+
+    print(" ========================== Checking for CERT.SF... ============================", file=report)
+
+    print(" =============================================================================\n", file=report)
+
+
+
+
+def crsa_style(report):
+
+    print("\n =============================================================================", file=report)
+
+    print(" ========================== Checking for CERT.RSA... ===========================", file=report)
+
+    print(" =============================================================================\n", file=report)
