@@ -6,6 +6,8 @@ import time
 
 import subprocess
 
+from pyaxmlparser import APK
+
 from android_verifier.police_style import *
 
 from android_verifier.rep_style import *
@@ -124,6 +126,12 @@ def code_ob_rep(temp_dir, input_file, report):
 
 
 
+def overview_rep(input_file, report):
+
+    apk = APK(input_file)
+    
+    print(apk.show(), file=report)
+
 
 
 def manifest_main_rep(app_attributes, android_manifest, report):
@@ -208,9 +216,6 @@ def check_sdk_rep(sdk_attributes, android_manifest, report):
 
         result = re.search(f'{sdk_attributes[0]}"([^"]*)', content)
 
-        #print(result)
-
-    
         if result:
 
             value = result.group(1)
@@ -238,6 +243,38 @@ def deep_links_rep(android_manifest, report):
         if scheme and host:
 
             print(f"Scheme: {scheme.group(1)}, Host: {host.group(1)}", file=report)
+
+
+
+def check_MF_rep(manifest_mf_path, report):
+
+    manifest_mf_path = os.path.join("temp_dir", "META-INF" ,"MANIFEST.MF")
+
+    with open(manifest_mf_path, 'r') as f:
+
+        content = f.read()
+
+    print(content, file=report)
+
+
+def check_CSF_rep(cert_sf_path, report):
+
+    cert_sf_path = os.path.join("temp_dir", "META-INF" ,"CERT.SF")
+
+    with open(cert_sf_path, 'r') as f:
+
+        content = f.read()
+
+    print(content, file=report)
+
+
+def check_CRSA_rep(cert_rsa_path, report):
+
+    cert_rsa_path = os.path.join("temp_dir", "META-INF" ,"CERT.RSA")
+
+    result = subprocess.run(["keytool", "-printcert", "-file", cert_rsa_path], capture_output=True, text=True)
+
+    print(result.stdout, file=report)
 
 
 
