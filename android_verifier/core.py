@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+
+
 import os
 
 import sys
@@ -9,10 +11,6 @@ import subprocess
 import re
 
 import time
-
-import requests
-
-import platform
 
 from pyaxmlparser import APK
 
@@ -65,163 +63,12 @@ count_no_obfuscated=0
 total=0
 
 
-def detect_os():
 
-    os_type = platform.system()
-
-    if os_type == "Windows":
-
-        return 1
-    
-    elif os_type == "Linux":
-
-        return 2
-    
-    else:
-
-        return 2 
-
-
-def download_file(url, local_filename):
-
-    with requests.get(url, stream=True) as r:
-
-        r.raise_for_status()
-
-        with open(local_filename, 'wb') as f:
-
-            for chunk in r.iter_content(chunk_size=8192):
-
-                f.write(chunk)
-
-    return local_filename
-
-
-def check_apktool_installed_W():
-
-    apktool_bat = os.path.join("C:\\apktool", "apktool.bat")
-
-    apktool_jar = os.path.join("C:\\apktool", "apktool.jar")
-
-    if os.path.isfile(apktool_bat) and os.path.isfile(apktool_jar):
-
-        return True
-    
-    return False
-
-
-def install_apktool_W():
-
-    if not check_apktool_installed_W():
-
-        print("apktool is not installed.")
-
-        choice = input("Do you want to install apktool? (y/n): ")
-
-        if choice.lower() == "y":
-
-            apktool_url = "https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/windows/apktool.bat"
-
-            apktool_jar_url = "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.6.1.jar"
-
-            # Dossier de destination
-            apktool_dir = "C:\\apktool"
-
-            os.makedirs(apktool_dir, exist_ok=True)
-
-            # Chemins de téléchargement
-            apktool_bat_path = os.path.join(apktool_dir, "apktool.bat")
-
-            apktool_jar_path = os.path.join(apktool_dir, "apktool.jar")
-
-            # Télécharger APKTool et le wrapper
-            print("Downloading apktool.bat...")
-
-            download_file(apktool_url, apktool_bat_path)
-
-            print("Downloading apktool.jar...")
-
-            download_file(apktool_jar_url, apktool_jar_path)
-
-            # Ajouter le chemin de APKTool au PATH utilisateur
-            path_variable = os.environ['PATH']
-
-            if apktool_dir not in path_variable:
-
-                subprocess.run(f'setx PATH "%PATH%;{apktool_dir}"', shell=True)
-
-            print("APKTool installation completed. Please restart your command prompt.")
-        
-        else:
-
-            print("Installation of apktool cancelled.")
-
-            sys.exit(1)
-    
-
-
-def decompile_apk_W(input_file):
-
-    apktool_bat = os.path.join("C:\\apktool", "apktool.bat")
-    
-    if not os.path.isfile(apktool_bat):
-
-        raise FileNotFoundError(f"{apktool_bat} n'existe pas. Assurez-vous que APKTool est installé correctement.")
-    
-    command = ["cmd", "/c", apktool_bat, "d", input_file]
-    
-    result = subprocess.run(command, capture_output=True, text=True)
-    
-    if result.returncode == 0:
-
-        print(f"Décompilation réussie.")
-
-    else:
-
-        print(f"Erreur lors de la décompilation : {result.stderr}")
-
-
-def extract_W(apk_path, output_dir):
-
-    seven_zip_path = r"C:\Program Files\7-Zip\7z.exe"
-    
-    if not os.path.isfile(seven_zip_path):
-
-        print("7-Zip n'est pas installé ou le chemin est incorrect.")
-
-        sys.exit(1)
-    
-    command = [seven_zip_path, "a", "-tzip", apk_path, output_dir]
-    
-    result = subprocess.run(command, capture_output=True, text=True)
-    
-    if result.returncode == 0:
-
-        print(f"Compression réussie. Le fichier est dans {output_dir}")
-
-    else:
-
-        print(f"Erreur lors de la compression : {result.stderr}")
-
-
-def verify_f_W():
-
-    android_manifest = f"{os.path.splitext(input_file)[0]}/AndroidManifest.xml"
-
-    if not os.path.isfile(android_manifest):
-
-        print("The AndroidManifest.xml file does not exist.")
-
-        sys.exit(1)
-
-
-
-
-def check_apktool_installed_L():
+def check_apktool_installed():
 
     if not subprocess.call(["which", "apktool"], stdout=subprocess.DEVNULL) == 0:
 
-        install_apktool_L()
+        install_apktool()
 
         return False
 
@@ -229,7 +76,7 @@ def check_apktool_installed_L():
 
 
 
-def install_apktool_L():
+def install_apktool():
 
     print("apktool is not installed.")
 
@@ -259,7 +106,7 @@ def install_apktool_L():
 
 
 
-def decompile_apk_L():
+def decompilation():
 
     print("\n")
 
@@ -267,28 +114,43 @@ def decompile_apk_L():
 
     result = subprocess.run(["apktool", "-f", "d", input_file])
 
+    #subprocess.run(["mkdir", "temp_dir"])
+
+    #temp_dir = subprocess.run(["cp", "-r", input_file, "temp_dir"])
+
+    #temp_dir = subprocess.run(["cp", "-r", input_file.split('.')[0], "temp_dir"])
+
+    #destination = os.path.join(temp_dir, temp_dir2)
+
+    #subprocess.run(["mkdir", "-p", destination])
+    
+    #temp_dir2 = subprocess.run(["mv", input_file.split('.')[0], destination])
+
+
+
     if result.returncode != 0:
 
-        print(f"{Red}decompile_apk_L failed for {input_file}.{reset}")
+        print(f"{Red}Decompilation failed for {input_file}.{reset}")
 
         sys.exit(1)
 
     else:
 
-        print(f"\n{Green}{bold}decompile_apk_L successfully completed for {input_file}{reset}")
+        print(f"\n{Green}{bold}Decompilation successfully completed for {input_file}{reset}")
 
         time.sleep(5)
 
         clear_screen()
 
 
-def extract_L():
+def extract():
 
     subprocess.run(["7z", "x", input_file, "-otemp_dir"])
 
 
 
-def verify_f_L():
+
+def verify_f():
 
     android_manifest = f"{os.path.splitext(input_file)[0]}/AndroidManifest.xml"
 
@@ -299,7 +161,7 @@ def verify_f_L():
         sys.exit(1)
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 
 
 
@@ -391,6 +253,10 @@ def code_ob(input_file):
     count_obfuscated = 0
 
     count_no_obfuscated = 0
+
+    #base_path = os.path.join(temp_dir, os.path.splitext(input_file)[0])
+
+
 
     # Checking AndroidManifest.xml
 
@@ -672,9 +538,13 @@ def meta_menu():
 
 def struct_apk():
 
+    # Create an APK object
     apk = APK(input_file)
-    
+
+    # Display the APK information
     apk.show()
+
+
 
 
 def check_attribute(attribute, android_manifest):
@@ -684,6 +554,8 @@ def check_attribute(attribute, android_manifest):
         content = file.read()
 
     result = re.search(f'{attribute}"([^"]*)', content)
+
+    
 
     if result:
 
@@ -900,26 +772,15 @@ def main():
 
     simulate_long_task()
 
-    if detect_os()== 1:
-
-        install_apktool_W()
-
-        decompile_apk_W(input_file)
-
-        extract_W(input_file,"temp_dir")
-
-    else:
-
-        check_apktool_installed_L()
-
-        decompile_apk_L()
-
-        extract_L()
+    check_apktool_installed()
 
     decomp_animation()
 
+    decompilation()
 
-    verify_f_L()
+    extract()
+
+    verify_f()
 
 
 
