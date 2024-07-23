@@ -26,6 +26,9 @@ bold = "\033[1m"
 
 reset = "\033[0m"
 
+HEADER = '\033[95m'
+
+VERSION = "1.0.0"
 
 
 def print_false(attribute):
@@ -83,6 +86,8 @@ def load_animation():
 
 def decomp_animation():
 
+    print('\n')
+
     spinner = itertools.cycle(['-', '\\', '|', '/'])
 
     loading_text = "Decompilation in progress ..."
@@ -121,7 +126,7 @@ def rep_animation():
 
 def simulate_long_task():
 
-    time.sleep(5)  # Simulates a task that takes 5 seconds
+    time.sleep(3)  # Simulates a task that takes 5 seconds
 
 
 
@@ -215,6 +220,8 @@ def choice_menu():
 
     print(f"{bold}{Red}| {Green}{bold}5{reset}        {Red}|{reset}     {Green}{bold}Generate Full Report...{reset}                                   {Red}|{reset}")
 
+    print(f"{bold}{Red}| {Green}{bold}6{reset}        {Red}|{reset}     {Green}{bold}Scanning for EndPoints/Links/Ips... (External Script){reset}     {Red}|{reset}")
+
     print(f"{bold}{Red}| {Green}{bold}q{reset}        {Red}|{reset}     {Green}{bold}Quit{reset}                                                      {Red}|{reset}")
 
     print(f"{bold}{Red} =========================================================================={reset}")
@@ -222,3 +229,23 @@ def choice_menu():
     print("\n")
 
 
+
+def banner():
+
+    print(HEADER + f"""
+   ___           __         _    __                      
+  / _ | ___  ___/ /______  (_)__/ /      
+ / __ |/ _ \/ _  / __/ _ \/ / _  /      
+/_/ |_/_//_/\_,_/_/  \___/_/\_,_/  {Green} __        _ ____      
+                               | | / /__ ____(_) _(_)__ ____                    
+Version 1.2                    | |/ / -_) __/ / _/ / -_) __/                    
+{HEADER}(c) 2024, By OVK-CyberSec {Green}     |___/\__/_/ /_/_//_/\__/_/""".format(VERSION) +
+reset, file=sys.stderr)
+    
+    simulate_long_task()
+
+
+
+   # Obfuscation Check
+    #Manifest Check
+    #Integrity Check
