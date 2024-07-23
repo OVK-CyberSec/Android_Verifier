@@ -105,7 +105,6 @@ def install_apktool():
         sys.exit(1)
 
 
-
 def decompilation():
 
     print("\n")
@@ -240,10 +239,6 @@ def code_ob(input_file):
 
     count_no_obfuscated = 0
 
-    #base_path = os.path.join(temp_dir, os.path.splitext(input_file)[0])
-
-
-
     # Checking AndroidManifest.xml
 
     manifest_file = os.path.join(os.path.splitext(input_file)[0], "AndroidManifest.xml")
@@ -342,6 +337,12 @@ def principal_menu():
         elif choice == "4":
 
             return "Meta"
+
+        elif choice == '6':
+
+            subprocess.run(["python", "apkleaks/apkleaks.py", "-f", input_file])
+
+            press_any_key()
 
         elif choice == "5":
 
@@ -755,6 +756,8 @@ def main():
     input_file = sys.argv[1]
 
     clear_screen()
+    
+    banner()
 
     simulate_long_task()
 
@@ -799,7 +802,7 @@ def main():
     
     finally:
 
-        directories = ["android_verifier/__pycache__", "InsecureShop", "temp_dir"]
+        directories = ["android_verifier/__pycache__", "InsecureShop", "temp_dir", "apkleaks/apkleaks/__pycache__"]
 
         for dir_path in directories:
             remove_directory(dir_path)
