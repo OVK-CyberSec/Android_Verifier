@@ -114,20 +114,6 @@ def decompilation():
 
     result = subprocess.run(["apktool", "-f", "d", input_file])
 
-    #subprocess.run(["mkdir", "temp_dir"])
-
-    #temp_dir = subprocess.run(["cp", "-r", input_file, "temp_dir"])
-
-    #temp_dir = subprocess.run(["cp", "-r", input_file.split('.')[0], "temp_dir"])
-
-    #destination = os.path.join(temp_dir, temp_dir2)
-
-    #subprocess.run(["mkdir", "-p", destination])
-    
-    #temp_dir2 = subprocess.run(["mv", input_file.split('.')[0], destination])
-
-
-
     if result.returncode != 0:
 
         print(f"{Red}Decompilation failed for {input_file}.{reset}")
