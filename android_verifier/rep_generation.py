@@ -42,13 +42,13 @@ def check_obfuscated_names_rep(file, report):
 
         if re.search(r'\b[a-zA-Z]{1,2}\b', content):
 
-            print(f"Obfuscated names found in {file}", file=report)
+            print(f"- Obfuscated names found in {file}", file=report)
 
             return True
 
         else:
 
-            print(f"No obfuscated names found in {file}", file=report)
+            print(f"- No obfuscated names found in {file}", file=report)
 
             return False
 
@@ -122,7 +122,7 @@ def code_ob_rep(temp_dir, input_file, report):
 
             if re.search(r'/[a-zA-Z]{1,2}/', os.path.join(root, name)):
 
-                print(f"Potential obfuscated path found: {os.path.join(root, name)}", file=report)
+                print(f"- Potential obfuscated path found: {os.path.join(root, name)}", file=report)
 
 
 
