@@ -170,7 +170,7 @@ def check_obfuscated_names(file, count_obfuscated, count_no_obfuscated):
 
     if re.search(r'\b[a-zA-Z]{1,2}\b', content):
 
-        print(f"{bold}{Green}Obfuscated names found in {reset}{bold}{file}{reset}")
+        print(f"{bold}{Green}- Obfuscated names found in {reset}{bold}{file}{reset}")
 
         count_obfuscated += 1
 
@@ -178,7 +178,7 @@ def check_obfuscated_names(file, count_obfuscated, count_no_obfuscated):
 
     else:
 
-        print(f"{Red}{bold}No obfuscated names found in {reset}{bold}{file}{reset}")
+        print(f"{Red}{bold}- No obfuscated names found in {reset}{bold}{file}{reset}")
 
         count_no_obfuscated += 1
 
@@ -294,7 +294,7 @@ def code_ob(input_file):
 
             if re.search(r'/[a-zA-Z]{1,2}/', os.path.join(root, name)):
 
-                print(f"{Red}{bold}Potential obfuscated path found:{reset} {os.path.join(root, name)}")
+                print(f"{Red}{bold}- Potential obfuscated path found:{reset} {os.path.join(root, name)}")
 
 
 
