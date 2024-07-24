@@ -2,6 +2,7 @@
 ![version](https://badge.fury.io/py/pyaxmlparser.svg)
 
 Checking apk for Manifest file, Meta-inf file, Obfuscation and scanning for URIs, endpoints & secrets.
+
 ![image](https://github.com/user-attachments/assets/fc12cbcf-7b61-4b74-90be-bd63235c6d22)
 
 
