@@ -21,6 +21,11 @@ $ pip3 install -r requirements.txt
 $ python3 main.py ~/path/to/file.apk
 ```
 
+## Interface
+
+
+![image](https://github.com/user-attachments/assets/e3221cf1-66c1-4bc2-9c4e-3fd4e6954356)
+
 ## Credits
 
 - [@dwisiswant0](https://github.com/dwisiswant0/apkleaks) - for his inspiring work on `apkleaks`, and including is tool in mine.
