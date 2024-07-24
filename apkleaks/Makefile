@@ -1,4 +1,4 @@
-AUTHOR  := OVK-CyberSec
+AUTHOR  := apkleaks
 APP     := apkleaks
 IMAGE   := $(AUTHOR)/$(APP)
 VERSION := $(shell cat VERSION | tr -d '\n')
